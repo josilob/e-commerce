@@ -11,6 +11,7 @@ const steps = ['Shipping adress', 'Payment details']
 const Checkout = ({cart}) => {
   const [activeStep, setActiveStep] = useState(0)
   const [checkoutToken,setCheckoutToken] = useState(null)
+  const [shippingData, setShippingdata] = useState({})
   const classes = useStyles()
 
   useEffect(()=>{
@@ -24,13 +25,21 @@ const Checkout = ({cart}) => {
     generateToken()
   },[cart])
 
+  const nextStep = ()=> setActiveStep((previousActiveStep)=>previousActiveStep + 1)
+  const backStep = ()=> setActiveStep((previousActiveStep)=>previousActiveStep - 1)
+
+  const next = (data) => {
+    setShippingdata(data)
+    nextStep()
+  }
+
   const Confirmation =()=>(
     <div>
       Confirmation
     </div>
   )
 
-  const Form =()=> activeStep === 0 ? <AdressForm checkoutToken={checkoutToken}/> : <PaymentForm/>
+  const Form =()=> activeStep === 0 ? <AdressForm checkoutToken={checkoutToken} next={next}/> : <PaymentForm shippingData={shippingData}/>
 
   return (
     <React.Fragment>
