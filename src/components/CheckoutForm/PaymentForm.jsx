@@ -8,9 +8,9 @@ import { CompareArrowsOutlined } from '@material-ui/icons'
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)
 
-const PaymentForm = ({checkoutToken, nextStep, backStep, shippingData}) => {
+const PaymentForm = ({checkoutToken, nextStep, backStep, shippingData, onCaptureCheckout}) => {
 
-  const handleSubmit = (e, elements, stripe) => {
+  const handleSubmit = async (e, elements, stripe) => {
     e.preventDefault()
     if(!stripe || !elements) return
 
@@ -40,7 +40,8 @@ const PaymentForm = ({checkoutToken, nextStep, backStep, shippingData}) => {
           }
         }
       }
-      
+      onCaptureCheckout(checkoutToken.id, orderData)
+      nextStep()
     }
   }
 
