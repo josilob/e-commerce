@@ -51,23 +51,24 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
     : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout}/>);
 
   return (
-    <React.Fragment>
-      <div className={classes.toolbar}/>
+    <>
+      <CssBaseline />
+      <div className={classes.toolbar} />
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography variant='h4' align='center'>Checkout</Typography>
+          <Typography variant="h4" align="center">Checkout</Typography>
           <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((step)=>(
-              <Step key={step}>
-                <StepLabel>{step}</StepLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
               </Step>
             ))}
           </Stepper>
-          {activeStep===steps.length?<Confirmation/>: checkoutToken && <Form/>}
+          {activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form />}
         </Paper>
       </main>
-    </React.Fragment>
-  )
-}
+    </>
+  );
+};
 
 export default Checkout
