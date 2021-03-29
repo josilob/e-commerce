@@ -13,6 +13,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   const [checkoutToken, setCheckoutToken] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
   const [shippingData, setShippingData] = useState({});
+  const [isFinished,setIsFinished] = useState(false)
   const classes = useStyles();
   const history = useHistory();
 
@@ -27,6 +28,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
           setCheckoutToken(token);
         } catch(error){
           console.log(error);
+          history.pushState('/')
         }
       };
       generateToken();
@@ -39,12 +41,26 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
     nextStep()
   }
 
+  const timeout = ()=>{
+    setTimeout(()=>{
+      setIsFinished(true)
+    },3000)
+  }
+
   let Confirmation =()=> order.customer ? (
     <React.Fragment>
       <div>
         <Typography variant='h5'>Thank you for you purchase, {order.customer.firstname} {order.customer.lastname}</Typography>
         <Divider className={classes.divider}/>
         <Typography variant='subtitle2'>Order ref: {order.customer_reference}</Typography>
+      </div>
+      <br/>
+      <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
+    </React.Fragment>
+  ) : isFinished ? (<React.Fragment>
+      <div>
+        <Typography variant='h5'>Thank you for you purchase</Typography>
+        <Divider className={classes.divider}/>
       </div>
       <br/>
       <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
@@ -64,7 +80,7 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
 
   const Form = () => (activeStep === 0
     ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} test={test} />
-    : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout}/>);
+    : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout} timeout={timeout} />);
 
   return (
     <>
