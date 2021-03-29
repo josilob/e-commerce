@@ -24,10 +24,9 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
       const generateToken = async () => {
         try {
           const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
-
           setCheckoutToken(token);
-        } catch {
-          if (activeStep !== steps.length) history.push('/');
+        } catch(error){
+          console.log(error);
         }
       };
       generateToken();
@@ -35,19 +34,36 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   }, [cart]);
 
 
-  const next = (data) => {
+  const test = (data) => {
     setShippingData(data)
     nextStep()
   }
 
-  const Confirmation =()=>(
-    <div>
-      Confirmation
-    </div>
-  )
+  let Confirmation =()=> order.customer ? (
+    <React.Fragment>
+      <div>
+        <Typography variant='h5'>Thank you for you purchase, {order.customer.firstname} {order.customer.lastname}</Typography>
+        <Divider className={classes.divider}/>
+        <Typography variant='subtitle2'>Order ref: {order.customer_reference}</Typography>
+      </div>
+      <br/>
+      <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
+    </React.Fragment>
+  ) : ( <div className={classes.spinner}>
+          <CircularProgress/>
+        </div>
+  );
+
+  if(error) {
+    <React.Fragment>
+      <Typography variant='h5'>
+        Error: {error}
+      </Typography>
+    </React.Fragment>
+  }
 
   const Form = () => (activeStep === 0
-    ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} next={next} />
+    ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} test={test} />
     : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout}/>);
 
   return (

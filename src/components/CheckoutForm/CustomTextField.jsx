@@ -6,7 +6,6 @@ function FormInput({ name, label, required }) {
   const { control } = useFormContext();
   const isError = false;
 
-
   return (
     <Grid item xs={12} sm={6}>
       <Controller
@@ -17,6 +16,7 @@ function FormInput({ name, label, required }) {
         fullWidth
         required={required}
         error={isError}
+        defaultValue=''
       />
     </Grid>
   )
