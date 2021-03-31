@@ -3,11 +3,11 @@ import { CssBaseline, Paper, Stepper, Step, StepLabel, Typography, CircularProgr
 import { Link, useHistory } from 'react-router-dom';
 
 import { commerce } from '../../../lib/commerce';
-import AddressForm from '../AdressForm';
+import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
 import useStyles from './styles';
 
-const steps = ['Shipping adress', 'Payment details']
+const steps = ['Shipping address', 'Payment details'];
 
 const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   const [checkoutToken, setCheckoutToken] = useState(null);
@@ -25,21 +25,22 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
       const generateToken = async () => {
         try {
           const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
+
           setCheckoutToken(token);
-        } catch(error){
-          console.log(error);
-          history.pushState('/')
+        } catch {
+          if (activeStep !== steps.length) history.push('/');
         }
       };
+
       generateToken();
     }
   }, [cart]);
 
+  const test = (data) => {
+    setShippingData(data);
 
-  const next = (data) => {
-    setShippingData(data)
-    nextStep()
-  }
+    nextStep();
+  };
 
   const timeout = ()=>{
     setTimeout(()=>{
@@ -49,56 +50,58 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
 
 
   // TEST PAYMENT
-  // let Confirmation =()=> order.customer ? (
-  //   <React.Fragment>
-  //     <div>
-  //       <Typography variant='h5'>Thank you for you purchase, {order.customer.firstname} {order.customer.lastname}</Typography>
-  //       <Divider className={classes.divider}/>
-  //       <Typography variant='subtitle2'>Order ref: {order.customer_reference}</Typography>
-  //     </div>
-  //     <br/>
-  //     <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
-  //   </React.Fragment>
-  // ) : isFinished ? (<React.Fragment>
-  //     <div>
-  //       <Typography variant='h5'>Thank you for you purchase</Typography>
-  //       <Divider className={classes.divider}/>
-  //     </div>
-  //     <br/>
-  //     <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
-  //   </React.Fragment>
-  // ) : ( <div className={classes.spinner}>
-  //         <CircularProgress/>
-  //       </div>
-  // );
-
-    let Confirmation = () => (order.customer ? (
-    <>
-      <div>
-        <Typography variant="h5">Thank you for your purchase, {order.customer.firstname} {order.customer.lastname}!</Typography>
-        <Divider className={classes.divider} />
-        <Typography variant="subtitle2">Order ref: {order.customer_reference}</Typography>
-      </div>
-      <br />
-      <Button component={Link} variant="outlined" type="button" to="/">Back to home</Button>
-    </>
-  ) : (
-    <div className={classes.spinner}>
-      <CircularProgress />
-    </div>
-  ));
-
-  if(error) {
+  let Confirmation =()=> order.customer ? (
     <React.Fragment>
-      <Typography variant='h5'>
-        Error: {error}
-      </Typography>
+      <div>
+        <Typography variant='h5'>Thank you for you purchase, {order.customer.firstname} {order.customer.lastname}</Typography>
+        <Divider className={classes.divider}/>
+        <Typography variant='subtitle2'>Order ref: {order.customer_reference}</Typography>
+      </div>
+      <br/>
+      <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
     </React.Fragment>
-  }
+  ) : isFinished ? (<React.Fragment>
+      <div>
+        <Typography variant='h5'>Thank you for you purchase</Typography>
+        <Divider className={classes.divider}/>
+      </div>
+      <br/>
+      <Button component={Link} to='/' variant='outlined' type="button">Back to Home</Button>
+    </React.Fragment>
+  ) : ( <div className={classes.spinner}>
+          <CircularProgress/>
+        </div>
+  );
+
+  // let Confirmation = () => (order.customer ? (
+  //   <>
+  //     <div>
+  //       <Typography variant="h5">Thank you for your purchase, {order.customer.firstname} {order.customer.lastname}!</Typography>
+  //       <Divider className={classes.divider} />
+  //       <Typography variant="subtitle2">Order ref: {order.customer_reference}</Typography>
+  //     </div>
+  //     <br />
+  //     <Button component={Link} variant="outlined" type="button" to="/">Back to home</Button>
+  //   </>
+  // ) : (
+  //   <div className={classes.spinner}>
+  //     <CircularProgress />
+  //   </div>
+  // ));
+
+  // if (error) {
+  //   Confirmation = () => (
+  //     <>
+  //       <Typography variant="h5">Error: {error}</Typography>
+  //       <br />
+  //       <Button component={Link} variant="outlined" type="button" to="/">Back to home</Button>
+  //     </>
+  //   );
+  // }
 
   const Form = () => (activeStep === 0
-    ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} next={next} />
-    : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout} timeout={timeout} />);
+    ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} test={test} />
+    : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout} />);
 
   return (
     <>
@@ -121,4 +124,4 @@ const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   );
 };
 
-export default Checkout
+export default Checkout;
